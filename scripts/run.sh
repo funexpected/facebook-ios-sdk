@@ -103,7 +103,7 @@ main() {
     SDK_CURRENT_VERSION=$(grep -Eo 'FBSDK_VERSION_STRING @".*"' "$SDK_DIR/$SDK_MAIN_VERSION_FILE" | awk -F'"' '{print $2}')
     SDK_CURRENT_GRAPH_API_VERSION=$(grep -Eo 'FBSDK_TARGET_PLATFORM_VERSION @".*"' "$SDK_DIR/$SDK_MAIN_VERSION_FILE" | awk -F'"' '{print $2}')
 
-    SDK_GIT_REMOTE="https://github.com/facebook/facebook-ios-sdk"
+    SDK_GIT_REMOTE="https://github.com/funexpected/facebook-ios-sdk"
 
     SWIFT_PACKAGE_SCHEMES=(
       "FacebookCore"
@@ -132,6 +132,7 @@ main() {
   "lint") lint_sdk "$@" ;;
   "verify-spm-headers") verify_spm_headers "$@" ;;
   "verify-xcode-integration") verify_xcode_integration "$@" ;;
+  "print-version") print_version ;;
   "--help" | "help") echo "Check main() for supported commands" ;;
   esac
 }
@@ -279,6 +280,10 @@ tag_current_version() {
   fi
 }
 
+print_version() {
+  echo $SDK_CURRENT_VERSION
+}
+
 # Build
 build_sdk() {
   build_xcode_workspace() {
@@ -286,7 +291,7 @@ build_sdk() {
       -workspace "${1:-}" \
       -sdk "${2:-}" \
       -scheme "${3:-}" \
-      -configuration Debug | xcpretty
+      -configuration Debug
   }
 
   build_carthage() {
@@ -306,7 +311,7 @@ build_sdk() {
       -workspace .swiftpm/xcode/package.xcworkspace \
       -scheme "$scheme" \
       -sdk iphonesimulator \
-      OTHER_SWIFT_FLAGS="-D SWIFT_PACKAGE" | xcpretty
+      OTHER_SWIFT_FLAGS="-D SWIFT_PACKAGE"
     done
   }
 
@@ -333,7 +338,7 @@ build_sdk() {
         SmoketestSPM.xcodeproj/project.pbxproj
 
     xcodebuild build -scheme SmoketestSPM \
-      -sdk iphonesimulator | xcpretty
+      -sdk iphonesimulator
 
     set -u # Resume failing on undefined variables
   }
@@ -437,15 +442,15 @@ release_sdk() {
 
     # Release frameworks in static
     release_static() {
-      xcodebuild clean build \
+      xcodebuild build \
        -workspace FacebookSDK.xcworkspace \
        -scheme BuildAllKits \
-       -configuration Release | xcpretty
+       -configuration Release
 
-      xcodebuild clean build \
+      xcodebuild build \
        -workspace FacebookSDK.xcworkspace \
        -scheme BuildAllKits_TV \
-       -configuration Release | xcpretty
+       -configuration Release
 
       cd build || exit
       cp ../LICENSE ./ # LICENSE file

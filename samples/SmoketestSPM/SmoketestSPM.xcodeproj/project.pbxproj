@@ -370,7 +370,7 @@
 /* Begin XCRemoteSwiftPackageReference section */
 		F4CEA53E23C29C9E0086EB16 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/facebook/facebook-ios-sdk";
+			repositoryURL = "https://github.com/funexpected/facebook-ios-sdk";
 			requirement = {
 				branch = HEAD;
 				kind = branch;
