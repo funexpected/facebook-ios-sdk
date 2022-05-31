@@ -8,8 +8,6 @@
 
 #import "FBSDKAppEventsUtility.h"
 
-#import <AdSupport/AdSupport.h>
-
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FBSDKCoreKit_Basics/FBSDKCoreKit_Basics.h>
 #import <objc/runtime.h>
@@ -27,7 +25,6 @@
 
 @interface FBSDKAppEventsUtility ()
 
-@property (nullable, nonatomic) ASIdentifierManager *cachedAdvertiserIdentifierManager;
 
 @end
 
@@ -141,36 +138,7 @@ static FBSDKAppEventsUtility *_shared;
 - (nullable NSString *)_advertiserIDFromDynamicFrameworkResolver:(id<FBSDKDynamicFrameworkResolving>)dynamicFrameworkResolver
                                           shouldUseCachedManager:(BOOL)shouldUseCachedManager
 {
-  if (!self.settings.isAdvertiserIDCollectionEnabled) {
-    return nil;
-  }
-
-  if (@available(iOS 14.0, *)) {
-    if (!self.appEventsConfigurationProvider.cachedAppEventsConfiguration.advertiserIDCollectionEnabled) {
-      return nil;
-    }
-  }
-
-  ASIdentifierManager *manager = [self _asIdentifierManagerWithShouldUseCachedManager:shouldUseCachedManager
-                                                             dynamicFrameworkResolver:dynamicFrameworkResolver];
-  return manager.advertisingIdentifier.UUIDString;
-}
-
-- (ASIdentifierManager *)_asIdentifierManagerWithShouldUseCachedManager:(BOOL)shouldUseCachedManager
-                                               dynamicFrameworkResolver:(id<FBSDKDynamicFrameworkResolving>)dynamicFrameworkResolver
-{
-  if (shouldUseCachedManager && self.cachedAdvertiserIdentifierManager) {
-    return self.cachedAdvertiserIdentifierManager;
-  }
-
-  Class ASIdentifierManagerClass = [dynamicFrameworkResolver asIdentifierManagerClass];
-  ASIdentifierManager *manager = [ASIdentifierManagerClass sharedManager];
-  if (shouldUseCachedManager) {
-    self.cachedAdvertiserIdentifierManager = manager;
-  } else {
-    self.cachedAdvertiserIdentifierManager = nil;
-  }
-  return manager;
+  return nil;
 }
 
 - (BOOL)isStandardEvent:(nullable NSString *)event
@@ -482,7 +450,6 @@ static FBSDKAppEventsUtility *_shared;
   self.settings = nil;
   self.internalUtility = nil;
   self.errorFactory = nil;
-  self.cachedAdvertiserIdentifierManager = nil;
 }
 
 #endif

@@ -8,8 +8,6 @@
 
 #import "FBSDKSettings+Internal.h"
 
-#import <AdSupport/AdSupport.h>
-
 #import <FBSDKCoreKit_Basics/FBSDKCoreKit_Basics.h>
 
 #import "FBSDKAppEventsConfigurationProtocol.h"
@@ -260,18 +258,7 @@ FBSDKSETTINGS_PLIST_CONFIGURATION_SETTING_IMPL(
 
 - (FBSDKAdvertisingTrackingStatus)advertisingTrackingStatus
 {
-  if (@available(iOS 14.0, *)) {
-    if (self.advertiserTrackingStatusBacking == nil) {
-      self.advertiserTrackingStatusBacking = [self.store objectForKey:FBSDKSettingsAdvertisingTrackingStatus];
-      if (self.advertiserTrackingStatusBacking == nil) {
-        return [[self.appEventsConfigurationProvider cachedAppEventsConfiguration] defaultATEStatus];
-      }
-    }
-    return self.advertiserTrackingStatusBacking.unsignedIntegerValue;
-  } else {
-    // @lint-ignore CLANGTIDY
-    return ASIdentifierManager.sharedManager.advertisingTrackingEnabled ? FBSDKAdvertisingTrackingAllowed : FBSDKAdvertisingTrackingDisallowed;
-  }
+    return FBSDKAdvertisingTrackingDisallowed;
 }
 
 - (void)setAdvertiserTrackingStatus:(FBSDKAdvertisingTrackingStatus)status

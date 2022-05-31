@@ -1,0 +1,41 @@
+name: publish
+on:
+  push:
+    tags:
+      - v*-noidfa
+
+jobs:
+  build:
+    name: Export XCode Project
+    runs-on: macos-latest
+    steps:
+    - name: Setup env
+      run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+    - uses: actions/checkout@v2
+    - name: build
+      run: ./scripts/release-static.sh
+    - name: Releasing facebook static ${{ env.RELEASE_VERSION }}
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{env.RELEASE_VERSION }}
+        release_name: Facebook SDK ${{env.RELEASE_VERSION }}
+        body: |
+          ABOUT
+          =====
+          Patched Facebook version without any AdSupport stuff.
+          Without idfa it can be used for publishing apps in kids category.
+          by Funexpected Team.
+        draft: false
+    - name: Upload Release
+      id: upload-release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ./build/Release/FacebookSDK_Static.zip
+        asset_name: FacebookSDK_Static.zip
+        asset_content_type: application/zip
