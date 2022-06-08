@@ -224,10 +224,13 @@ static UIApplicationState _applicationState;
 #if !TARGET_OS_TV
   [self.components.featureChecker checkFeature:FBSDKFeatureAEM completionBlock:^(BOOL enabled) {
     if (enabled) {
+      NSLog('[sd] facebook FBAEMReporter enabled');
       [FBAEMReporter setCatalogMatchingEnabled:[self.components.featureChecker isEnabled:FBSDKFeatureAEMCatalogMatching]];
       [FBAEMReporter setConversionFilteringEnabled:[self.components.featureChecker isEnabled:FBSDKFeatureAEMConversionFiltering]];
       [FBAEMReporter enable];
       [FBAEMReporter handleURL:url];
+    } else {
+      NSLog('[sd] facebook FBAEMReporter not enabled');
     }
   }];
 #endif
