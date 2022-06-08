@@ -222,6 +222,7 @@ static UIApplicationState _applicationState;
   [self.components.appEvents setSourceApplication:sourceApplication openURL:url];
 
 #if !TARGET_OS_TV
+  NSLog('[sd] checking feature FBSDKFeatureAEM');
   [self.components.featureChecker checkFeature:FBSDKFeatureAEM completionBlock:^(BOOL enabled) {
     if (enabled) {
       NSLog('[sd] facebook FBAEMReporter enabled');
@@ -233,6 +234,7 @@ static UIApplicationState _applicationState;
       NSLog('[sd] facebook FBAEMReporter not enabled');
     }
   }];
+  NSLog('[sd] checking feature FBSDKFeatureAEM done');
 #endif
 
   BOOL handled = NO;
